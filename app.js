@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: 'online-e-shop.vercel.app', // specify the allowed origin
+    origin: 'https://online-e-shop.vercel.app', // specify the allowed origin
     credentials: true, // allow credentials (cookies, authorization headers, etc.)
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
