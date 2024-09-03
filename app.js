@@ -3,6 +3,7 @@ const app = express()
 const cors = require('cors');
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+const path = require('path');
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -16,6 +17,8 @@ app.use(cors({
 }));
 
 app.use("/", express.static("uploads"));
+
+// app.use('/', express.static(path.join(__dirname, 'uploads')));
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 

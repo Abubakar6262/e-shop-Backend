@@ -54,7 +54,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const activationToken = createActivationToken(newUser);
     // console.log("Activation token =>", activationToken);
 
-    const activationUrl = `http://localhost:3000/activation/${activationToken}`;
+    const activationUrl = `https://online-e-shop.vercel.app/activation/${activationToken}`;
 
     const options = {
         email: newUser.email,

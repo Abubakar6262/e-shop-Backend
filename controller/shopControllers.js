@@ -40,7 +40,7 @@ const registerShop = asyncHandler(async (req, res) => {
         };
         const activationToken = createActivationToken(newSeller);
         // return console.log("new seller ", activationToken);
-        const activationUrl = `http://localhost:3000/shop/activation/${activationToken}`;
+        const activationUrl = `https://online-e-shop.vercel.app/shop/activation/${activationToken}`;
 
         const options = {
             email: newSeller.email,
