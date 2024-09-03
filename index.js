@@ -9,7 +9,7 @@ const CoupounRoute = require('./routes/coupounCodeRoute')
 const PaymentRoute = require('./routes/paymentRoute')
 const OrderRoute = require('./routes/orderRoute')
 
-
+const PORT = process.env.PORT || 3000;
 
 //  Handeling uncaught Exception
 process.on("uncaughtException", err => {
