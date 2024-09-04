@@ -159,18 +159,16 @@ const activateNewUser = async (req, res) => {
 // logout user
 const logoutUser = async (req, res) => {
     try {
-        res.cookie("token", '', {
+        res.cookie("token", null, {
             expires: new Date(0),
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'Lax' : 'None',
             path: '/',
-        });
-        console.log("Cookie removed successfully");
-        res.status(200).json({ message: "Log out successfully" });
+        })
+        res.status(200).json({ message: "Log out successfully" })
     } catch (error) {
-        console.error("Error at logout:", error);
-        res.status(500).json({ message: "Logout failed" });
+        console.log("Error at logout");
     }
 }
 
