@@ -1,3 +1,8 @@
+const asyncHandler = require('express-async-handler')
+const jwt = require("jsonwebtoken");
+const userModel = require('../model/userModel');
+const shopModel = require('../model/shopModel');
+
 const verifyJWT = asyncHandler(async (req, res, next) => {
     try {
         const token = req.cookies.token;
