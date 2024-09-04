@@ -5,7 +5,7 @@ const sendToken = (user, res) => {
         expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'Lax' :'None' ,
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
         path: '/',
     };
 
