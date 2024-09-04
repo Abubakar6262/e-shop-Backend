@@ -159,16 +159,18 @@ const activateNewUser = async (req, res) => {
 // logout user
 const logoutUser = async (req, res) => {
     try {
-        res.cookie("token", null, {
+        res.cookie("token", '', {
             expires: new Date(0),
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
             path: '/',
-        })
-        res.status(200).json({ message: "Log out successfully" })
+        });
+        console.log("Cookie removed successfully");
+        res.status(200).json({ message: "Log out successfully" });
     } catch (error) {
-        console.log("Error at logout");
+        console.error("Error at logout:", error);
+        res.status(500).json({ message: "Logout failed" });
     }
 }
 
@@ -271,7 +273,7 @@ const deleteUserAddress = async (req, res) => {
 
         const { addressId } = req.body;
 
-        
+
 
         if (!addressId) {
             return res.status(400).json({ message: "Address ID is required" });
