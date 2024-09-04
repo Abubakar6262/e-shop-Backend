@@ -160,8 +160,11 @@ const activateNewUser = async (req, res) => {
 const logoutUser = async (req, res) => {
     try {
         res.cookie("token", null, {
-            expires: new Date(Date.now()),
+            expires: new Date(0),
             httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            path: '/',
         })
         res.status(200).json({ message: "Log out successfully" })
     } catch (error) {
