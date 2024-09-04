@@ -142,6 +142,9 @@ const logoutSeller = async (req, res) => {
         res.cookie("seller_token", null, {
             expires: new Date(Date.now()),
             httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            path: '/',
         })
         res.status(200).json({ message: "Log out successfully" })
     } catch (error) {
