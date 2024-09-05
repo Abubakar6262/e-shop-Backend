@@ -136,21 +136,22 @@ const activateNewSeller = async (req, res) => {
 
 }
 
-// logout user
+// logout seller
 const logoutSeller = async (req, res) => {
     try {
-        res.cookie("seller_token", null, {
-            expires: new Date(Date.now()),
+        res.cookie("seller_token", "", {  // Clear the seller token
+            expires: new Date(Date.now()),  // Expire immediately
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: process.env.NODE_ENV === 'production',  // Secure in production
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-            path: '/',
-        })
-        res.status(200).json({ message: "Log out successfully" })
+            path: '/',  // Ensure the path matches the path used when setting the cookie
+        });
+        res.status(200).json({ message: "Seller logged out successfully" });
     } catch (error) {
-        console.log("Error at logout");
+        console.log("Error during seller logout", error);
+        res.status(500).json({ message: "Logout failed" });
     }
-}
+};
 
 
 

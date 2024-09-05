@@ -159,18 +159,19 @@ const activateNewUser = async (req, res) => {
 // logout user
 const logoutUser = async (req, res) => {
     try {
-        res.cookie("token", null, {
-            expires: new Date(Date.now()),
+        res.cookie("token", "", {  // Clear the user token
+            expires: new Date(Date.now()),  // Expire immediately
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: process.env.NODE_ENV === 'production',  // Secure in production
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-            path: '/',
-        })
-        res.status(200).json({ message: "Log out successfully" })
+            path: '/',  // Ensure the path matches the path used when setting the cookie
+        });
+        res.status(200).json({ message: "User logged out successfully" });
     } catch (error) {
-        console.log("Error at logout");
+        console.log("Error during user logout", error);
+        res.status(500).json({ message: "Logout failed" });
     }
-}
+};
 
 // Update user profile Data
 const updateUserProfile = async (req, res) => {
