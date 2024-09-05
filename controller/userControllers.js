@@ -128,28 +128,38 @@ const createActivationToken = (user) => {
 const activateNewUser = async (req, res) => {
     try {
         const { activation_token } = req.body;
-        const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
-        // console.log("here in activation new user", newUser);
+        
+        // Verify the activation token
+        const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET, (err, decoded) => {
+            if (err) {
+                // Check for token expiration
+                if (err.name === "TokenExpiredError") {
+                    return res.status(401).json({ message: "Token expired" });
+                }
+                return res.status(400).json({ message: "Invalid Token" });
+            }
+            return decoded;
+        });
+        
         if (!newUser) {
-            return res.status(400).json({ message: "Invalid Token" })
+            return res.status(400).json({ message: "Invalid Token" });
         }
+
         const { email, name, password, avatar } = newUser;
 
-        let findUser = await userModel.findOne({ email })
-        // console.log("Find exists user ", findUser);
+        let findUser = await userModel.findOne({ email });
         if (findUser) {
-            return res.status(400).json({ message: "User already exists" })
+            return res.status(400).json({ message: "User already exists" });
         }
-        user = await userModel.create(newUser)
-        // console.log("new user created ",user);
 
-        sendToken(user, res)
+        const user = await userModel.create(newUser);
+        sendToken(user, res);
 
     } catch (error) {
         console.log("Error at activation New User", error);
+        return res.status(500).json({ message: "Server Error" });
     }
-
-}
+};
 
 // logout user
 const logoutUser = async (req, res) => {
