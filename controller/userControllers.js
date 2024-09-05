@@ -9,44 +9,42 @@ const sendToken = require("../utils/jwtToken");
 
 const registerUser = asyncHandler(async (req, res) => {
 
-    // get user details from frontend
-    // validation e.g=> check -not empty
-    // check if user already exists: username, email
-    // check for image , check for avatar
-    // create user object --create entry in DB
-    // remove password and refresh token field from response
-    // check for user creation
-    // return response
-
-    // console.log("Request received in user controller");
     const { name, email, password } = req.body;
-    // console.log("Received data - name:", name, "email:", email, "password:", password);
 
     if (!name.trim() || !email.trim() || !password.trim()) {
         return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Check if user already exists
     const existingUser = await userModel.findOne({ email: email });
     if (existingUser) {
-        console.log(" user already exsist =>", existingUser);
-        const filename = req.file.filename;
-        const filePath = `${filename}`;
-        fs.unlink(filePath, (err) => {
-            if (err) {
-                console.log("Error Deleting file", err);
-                return res.status(500).json({ message: "Error deleting file" })
-            }
-        })
+        console.log("User already exists:", existingUser);
+
+        // Delete the uploaded file if the user already exists
+        if (req.file) {
+            const filePath = `./uploads/${req.file.filename}`;
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.log("Error deleting file:", err);
+                    return res.status(500).json({ message: "Error deleting file" });
+                }
+            });
+        }
+
         return res.status(409).json({ message: "User with the given email already exists" });
     }
 
+    // Hash the password
     const hashPassword = await HashPassword(password);
-    const filename = req.file.filename;
-    const fileUrl = path.join(filename);
 
-    console.log("file that is upload =>" , fileUrl);
-    
+    // Check if the file is uploaded
+    let fileUrl = null;
+    if (req.file) {
+        fileUrl = path.join(req.file.filename);
+        console.log("Uploaded file URL:", fileUrl);
+    }
 
+    // Create the user object
     const newUser = {
         name,
         email,
@@ -54,38 +52,29 @@ const registerUser = asyncHandler(async (req, res) => {
         avatar: fileUrl
     };
 
-    console.log("new user => " ,newUser );
-    
+    console.log("New user:", newUser);
 
+    // Generate activation token
     const activationToken = createActivationToken(newUser);
-    console.log("Activation token =>", activationToken);
+    console.log("Activation token:", activationToken);
 
+    // Send activation email
     const activationUrl = `https://online-e-shop.vercel.app/activation/${activationToken}`;
-
     const options = {
         email: newUser.email,
         subject: "Activate your account",
-        text: `Hello ${newUser.name} Please click on the link to activate your account: ${activationUrl}`
-    }
+        text: `Hello ${newUser.name}, Please click on the link to activate your account: ${activationUrl}`
+    };
 
     try {
-        sendMail(options)
-        res.status(201).json({ message: `Please check your email : ${newUser.email} to Activate your account` })
+        await sendMail(options);
+        res.status(201).json({ message: `Please check your email: ${newUser.email} to activate your account` });
     } catch (error) {
-        console.log("error at activation", error);
-        return res.status(500).json({ message: "Somthing went wrong at activation account" })
+        console.log("Error at activation:", error);
+        return res.status(500).json({ message: "Something went wrong at account activation" });
     }
-
-    // await newUser.save(); // Save the new user to the database
-
-    // const createdUser = await userModel.findById(newUser._id).select("-password -refreshToken");
-    // if (!createdUser) {
-    //     return res.status(500).json({ message: "Something went wrong while registering the user" });
-    // }
-
-    // return res.status(200).json({ data: createdUser, message: "User registered successfully" });
-
 });
+
 
 const loginUser = asyncHandler(async (req, res) => {
     try {
