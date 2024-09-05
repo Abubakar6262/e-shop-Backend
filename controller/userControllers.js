@@ -44,6 +44,9 @@ const registerUser = asyncHandler(async (req, res) => {
     const filename = req.file.filename;
     const fileUrl = path.join(filename);
 
+    console.log("file that is upload =>" , fileUrl);
+    
+
     const newUser = {
         name,
         email,
@@ -51,8 +54,11 @@ const registerUser = asyncHandler(async (req, res) => {
         avatar: fileUrl
     };
 
+    console.log("new user => " ,newUser );
+    
+
     const activationToken = createActivationToken(newUser);
-    // console.log("Activation token =>", activationToken);
+    console.log("Activation token =>", activationToken);
 
     const activationUrl = `https://online-e-shop.vercel.app/activation/${activationToken}`;
 
